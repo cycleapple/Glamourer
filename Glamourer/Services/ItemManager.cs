@@ -30,7 +30,7 @@ public class ItemManager
         ItemData itemData, DictStain stains, RestrictedGear restrictedGear, DictBonusItems dictBonusItems)
     {
         _config              = config;
-        ItemSheet            = gameData.GetExcelSheet<Item>();
+        ItemSheet            = gameData.GetSafeExcelSheet<Item>();
         ObjectIdentification = objectIdentification;
         ItemData             = itemData;
         Stains               = stains;

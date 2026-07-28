@@ -1,4 +1,4 @@
-﻿using Dalamud.Plugin.Services;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Glamourer.Events;
@@ -273,7 +273,7 @@ public class ItemUnlockManager : ISavable, IDisposable, IReadOnlyDictionary<Item
     private static Dictionary<ItemId, UnlockRequirements> CreateUnlockData(IDataManager gameData, ItemManager items)
     {
         var ret     = new Dictionary<ItemId, UnlockRequirements>();
-        var cabinet = gameData.GetExcelSheet<Cabinet>();
+        var cabinet = gameData.GetSafeExcelSheet<Cabinet>();
         foreach (var row in cabinet)
         {
             if (items.ItemData.TryGetValue(row.Item.RowId, EquipSlot.MainHand, out var item))
@@ -281,7 +281,7 @@ public class ItemUnlockManager : ISavable, IDisposable, IReadOnlyDictionary<Item
         }
 
         var gilShopItem = gameData.GetSubrowExcelSheet<GilShopItem>();
-        var gilShop     = gameData.GetExcelSheet<GilShop>();
+        var gilShop     = gameData.GetSafeExcelSheet<GilShop>();
         foreach (var row in gilShopItem.SelectMany(g => g))
         {
             if (!items.ItemData.TryGetValue(row.Item.RowId, EquipSlot.MainHand, out var item))

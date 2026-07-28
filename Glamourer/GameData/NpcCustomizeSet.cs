@@ -1,4 +1,4 @@
-﻿using Dalamud.Plugin.Services;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using Lumina.Excel.Sheets;
@@ -74,7 +74,7 @@ public class NpcCustomizeSet : IAsyncDataContainer, IReadOnlyList<NpcData>
     /// <summary> Create data from event NPCs. </summary>
     private static List<NpcData> CreateEnpcData(IDataManager data, DictENpc eNpcs)
     {
-        var enpcSheet = data.GetExcelSheet<ENpcBase>();
+        var enpcSheet = data.GetSafeExcelSheet<ENpcBase>();
         var list      = new List<NpcData>(eNpcs.Count);
 
         // Go through all event NPCs already collected into a dictionary.
@@ -114,7 +114,7 @@ public class NpcCustomizeSet : IAsyncDataContainer, IReadOnlyList<NpcData>
     /// <summary> Create data from battle NPCs. </summary>
     private static List<NpcData> CreateBnpcData(IDataManager data, DictBNpc bNpcs, DictBNpcNames bNpcNames)
     {
-        var bnpcSheet = data.GetExcelSheet<BNpcBase>();
+        var bnpcSheet = data.GetSafeExcelSheet<BNpcBase>();
         var list      = new List<NpcData>(bnpcSheet.Count);
 
         // We go through all battle NPCs in the sheet because the dictionary refers to names.

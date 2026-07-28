@@ -1,4 +1,4 @@
-﻿using Dalamud.Plugin.Services;
+using Dalamud.Plugin.Services;
 using Glamourer.Services;
 using Glamourer.Unlocks;
 using Dalamud.Bindings.ImGui;
@@ -88,7 +88,7 @@ public sealed class ItemCombo : FilterComboCache<EquipItem>
 
     private static string GetLabel(IDataManager gameData, EquipSlot slot)
     {
-        var sheet = gameData.GetExcelSheet<Addon>();
+        var sheet = gameData.GetSafeExcelSheet<Addon>();
 
         return slot switch
         {

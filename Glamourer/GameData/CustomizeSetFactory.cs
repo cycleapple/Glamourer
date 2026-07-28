@@ -1,4 +1,4 @@
-﻿using Dalamud.Game;
+using Dalamud.Game;
 using Dalamud.Plugin.Services;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
@@ -104,10 +104,10 @@ internal class CustomizeSetFactory(
     }
 
     private readonly ColorParameters                _colorParameters = new(_gameData, _log);
-    private readonly ExcelSheet<CharaMakeCustomize> _customizeSheet  = _gameData.GetExcelSheet<CharaMakeCustomize>(ClientLanguage.English);
-    private readonly ExcelSheet<Lobby>              _lobbySheet      = _gameData.GetExcelSheet<Lobby>(ClientLanguage.English);
-    private readonly ExcelSheet<RawRow>             _hairSheet       = _gameData.GetExcelSheet<RawRow>(ClientLanguage.English, "HairMakeType");
-    private readonly ExcelSheet<Tribe>              _tribeSheet      = _gameData.GetExcelSheet<Tribe>(ClientLanguage.English);
+    private readonly ExcelSheet<CharaMakeCustomize> _customizeSheet  = _gameData.GetSafeExcelSheet<CharaMakeCustomize>(ClientLanguage.English);
+    private readonly ExcelSheet<Lobby>              _lobbySheet      = _gameData.GetSafeExcelSheet<Lobby>(ClientLanguage.English);
+    private readonly ExcelSheet<RawRow>             _hairSheet       = _gameData.GetSafeExcelSheet<RawRow>(ClientLanguage.English, "HairMakeType");
+    private readonly ExcelSheet<Tribe>              _tribeSheet      = _gameData.GetSafeExcelSheet<Tribe>(ClientLanguage.English);
 
     // Those color pickers are shared between all races.
     private readonly CustomizeData[] _highlightPicker           = CreateColors(_colors, CustomizeIndex.HighlightsColor, 256,  192);
