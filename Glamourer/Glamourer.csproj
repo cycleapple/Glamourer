@@ -2,8 +2,8 @@
   <PropertyGroup>
     <RootNamespace>Glamourer</RootNamespace>
     <AssemblyName>Glamourer</AssemblyName>
-    <FileVersion>1.5.0.7</FileVersion>
-    <AssemblyVersion>1.5.0.7</AssemblyVersion>
+    <FileVersion>1.5.0.8</FileVersion>
+    <AssemblyVersion>1.5.0.8</AssemblyVersion>
     <Product>Glamourer</Product>
     <Copyright>Copyright © 2025</Copyright>
     <WarningLevel>4</WarningLevel>
