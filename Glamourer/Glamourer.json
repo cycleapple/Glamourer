@@ -5,7 +5,7 @@
   "Description": "提供玩家外觀、自訂參數與裝備的變更及儲存功能，需要啟用 Penumbra。此台服 API13 版本包含繁中 Excel 與本地化角色姓名辨識修正。",
   "Tags": [ "Appearance", "Glamour", "Race", "Outfit", "Armor", "Clothes", "Skins", "Customization", "Design", "Character" ],
   "InternalName": "Glamourer",
-  "AssemblyVersion": "1.5.0.9",
+  "AssemblyVersion": "1.5.0.10",
   "RepoUrl": "https://github.com/cycleapple/Glamourer",
   "ApplicableVersion": "any",
   "DalamudApiLevel": 13,

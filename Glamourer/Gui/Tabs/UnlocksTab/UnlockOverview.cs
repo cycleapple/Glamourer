@@ -56,7 +56,7 @@ public class UnlockOverview(
             }
         }
 
-        if (ImGui.Selectable("Bonus Items", _selected4 == BonusItemFlag.Glasses))
+        if (ImGui.Selectable("額外裝備", _selected4 == BonusItemFlag.Glasses))
         {
             _selected1 = FullEquipType.Unknown;
             _selected2 = SubRace.Unknown;
@@ -138,7 +138,7 @@ public class UnlockOverview(
                     ImGui.Image(wrap.Handle, size);
                 ImGui.TextUnformatted(unlockData.Name);
                 ImGui.TextUnformatted($"{customize.Index.ToDefaultName()} {customize.Value.Value}");
-                ImGui.TextUnformatted(unlocked ? $"Unlocked on {time:g}" : "Not unlocked.");
+            ImGui.TextUnformatted(unlocked ? $"解鎖時間：{time:g}" : "尚未解鎖。");
             }
 
             if (counter != iconsPerRow - 1)
@@ -215,7 +215,7 @@ public class UnlockOverview(
                 ImUtf8.Text($"{item.Id.Id}");
                 ImUtf8.Text($"{item.PrimaryId.Id}-{item.Variant.Id}");
                 // TODO
-                ImUtf8.Text("Always Unlocked"u8); // : $"Unlocked on {time:g}" : "Not Unlocked.");
+            ImUtf8.Text("永久解鎖"u8); // : $"Unlocked on {time:g}" : "Not Unlocked.");
                 // TODO
                 //tooltip.CreateTooltip(item, string.Empty, false);
                 DrawModTooltip(mods);

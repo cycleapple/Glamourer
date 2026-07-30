@@ -66,8 +66,8 @@ public class SetPanel(
                 var enabled = Selection.Enabled;
                 if (ImUtf8.Checkbox("##Enabled"u8, ref enabled))
                     _manager.SetState(_selector.SelectionIndex, enabled);
-                ImUtf8.LabeledHelpMarker("Enabled"u8,
-                    "Whether the designs in this set should be applied at all. Only one set can be enabled for a character at the same time."u8);
+        ImUtf8.LabeledHelpMarker("啟用"u8,
+            "是否套用此集合中的設計。同一角色一次只能啟用一個集合。"u8);
             }
 
             using (ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing))
@@ -75,9 +75,9 @@ public class SetPanel(
                 var useGame = _selector.Selection!.BaseState is AutoDesignSet.Base.Game;
                 if (ImUtf8.Checkbox("##gameState"u8, ref useGame))
                     _manager.ChangeBaseState(_selector.SelectionIndex, useGame ? AutoDesignSet.Base.Game : AutoDesignSet.Base.Current);
-                ImUtf8.LabeledHelpMarker("Use Game State as Base"u8,
-                    "When this is enabled, the designs matching conditions will be applied successively on top of what your character is supposed to look like for the game. "u8
-                  + "Otherwise, they will be applied on top of the characters actual current look using Glamourer."u8);
+        ImUtf8.LabeledHelpMarker("以遊戲狀態為基礎"u8,
+            "啟用後，符合條件的設計會依序套用在角色原本的遊戲外觀上。"u8
+          + "否則會套用在 Glamourer 所呈現的角色目前實際外觀上。"u8);
             }
         }
 
@@ -93,8 +93,8 @@ public class SetPanel(
                     _config.Save();
                 }
 
-                ImUtf8.LabeledHelpMarker("Show Editing"u8,
-                    "Show options to change the name or the associated character or NPC of this design set."u8);
+        ImUtf8.LabeledHelpMarker("顯示編輯選項"u8,
+            "顯示可變更此設計集合名稱或關聯角色／NPC 的選項。"u8);
             }
 
             using (ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing))
@@ -103,8 +103,8 @@ public class SetPanel(
                 if (ImGui.Checkbox("##resetSettings", ref resetSettings))
                     _manager.ChangeResetSettings(_selector.SelectionIndex, resetSettings);
 
-                ImUtf8.LabeledHelpMarker("Reset Temporary Settings"u8,
-                    "Always reset all temporary settings applied by Glamourer when this automation set is applied, regardless of active designs."u8);
+        ImUtf8.LabeledHelpMarker("重設暫時設定"u8,
+            "套用此自動化集合時，一律重設 Glamourer 套用的所有暫時設定，不受啟用中設計影響。"u8);
             }
         }
 
@@ -117,7 +117,7 @@ public class SetPanel(
             var name  = _tempName ?? Selection.Name;
             var flags = _selector.IncognitoMode ? ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.Password : ImGuiInputTextFlags.None;
             ImGui.SetNextItemWidth(330 * ImGuiHelpers.GlobalScale);
-            if (ImGui.InputText("Rename Set##Name", ref name, 128, flags))
+        if (ImGui.InputText("重新命名集合##Name", ref name, 128, flags))
                 _tempName = name;
 
             if (ImGui.IsItemDeactivated())
@@ -170,26 +170,26 @@ public class SetPanel(
 
         if (singleRow)
         {
-            ImUtf8.TableSetupColumn("Design"u8, ImGuiTableColumnFlags.WidthFixed, 220 * ImGuiHelpers.GlobalScale);
+        ImUtf8.TableSetupColumn("設計"u8, ImGuiTableColumnFlags.WidthFixed, 220 * ImGuiHelpers.GlobalScale);
             if (_config.ShowAllAutomatedApplicationRules)
-                ImUtf8.TableSetupColumn("Application"u8, ImGuiTableColumnFlags.WidthFixed,
+        ImUtf8.TableSetupColumn("套用項目"u8, ImGuiTableColumnFlags.WidthFixed,
                     6 * ImGui.GetFrameHeight() + 10 * ImGuiHelpers.GlobalScale);
             else
-                ImUtf8.TableSetupColumn("Use"u8, ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("Use").X);
+        ImUtf8.TableSetupColumn("使用"u8, ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("使用").X);
         }
         else
         {
-            ImUtf8.TableSetupColumn("Design / Job Restrictions"u8, ImGuiTableColumnFlags.WidthFixed,
+        ImUtf8.TableSetupColumn("設計／職業限制"u8, ImGuiTableColumnFlags.WidthFixed,
                 250 * ImGuiHelpers.GlobalScale - (ImGui.GetScrollMaxY() > 0 ? ImGui.GetStyle().ScrollbarSize : 0));
             if (_config.ShowAllAutomatedApplicationRules)
-                ImUtf8.TableSetupColumn("Application"u8, ImGuiTableColumnFlags.WidthFixed,
+        ImUtf8.TableSetupColumn("套用項目"u8, ImGuiTableColumnFlags.WidthFixed,
                     3 * ImGui.GetFrameHeight() + 4 * ImGuiHelpers.GlobalScale);
             else
-                ImUtf8.TableSetupColumn("Use"u8, ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("Use").X);
+        ImUtf8.TableSetupColumn("使用"u8, ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize("使用").X);
         }
 
         if (singleRow)
-            ImUtf8.TableSetupColumn("Job Restrictions"u8, ImGuiTableColumnFlags.WidthStretch);
+        ImUtf8.TableSetupColumn("職業限制"u8, ImGuiTableColumnFlags.WidthStretch);
 
         if (_config.ShowUnlockedItemWarnings)
             ImUtf8.TableSetupColumn(""u8, ImGuiTableColumnFlags.WidthFixed, 2 * ImGui.GetFrameHeight() + 4 * ImGuiHelpers.GlobalScale);
@@ -201,8 +201,8 @@ public class SetPanel(
             ImGui.TableNextColumn();
             var keyValid = _config.DeleteDesignModifier.IsActive();
             var tt = keyValid
-                ? "Remove this design from the set."
-                : $"Remove this design from the set.\nHold {_config.DeleteDesignModifier} to remove.";
+                ? "從集合中移除此設計。"
+                : $"從集合中移除此設計。\n按住 {_config.DeleteDesignModifier} 以移除。";
 
             if (ImGuiUtil.DrawDisabledButton(FontAwesomeIcon.Trash.ToIconString(), new Vector2(ImGui.GetFrameHeight()), tt, !keyValid, true))
                 _endAction = () => _manager.DeleteDesign(Selection, idx);
@@ -236,7 +236,7 @@ public class SetPanel(
 
         ImGui.TableNextColumn();
         ImGui.TableNextColumn();
-        ImUtf8.TextFrameAligned("New"u8);
+        ImUtf8.TextFrameAligned("新增"u8);
         ImGui.TableNextColumn();
         _designCombo.Draw(Selection, null, -1);
         ImGui.TableNextRow();
@@ -295,7 +295,7 @@ public class SetPanel(
             _manager.ChangeGearsetCondition(Selection, idx, (short)(usingGearset ? 0 : -1));
         }
 
-        ImUtf8.HoverTooltip("Click to switch between Job and Gearset restrictions."u8);
+        ImUtf8.HoverTooltip("點擊以切換職業與套裝限制。"u8);
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
         if (usingGearset)

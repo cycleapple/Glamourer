@@ -98,7 +98,7 @@ public class DesignPanel
         => HeaderDrawer.Draw(SelectionName, 0, ImGui.GetColorU32(ImGuiCol.FrameBg), _leftButtons, _rightButtons);
 
     private string SelectionName
-        => _selector.Selected == null ? "No Selection" : _selector.IncognitoMode ? _selector.Selected.Incognito : _selector.Selected.Name.Text;
+        => _selector.Selected == null ? "未選取" : _selector.IncognitoMode ? _selector.Selected.Incognito : _selector.Selected.Name.Text;
 
     private void DrawEquipment()
     {
@@ -167,8 +167,8 @@ public class DesignPanel
             return;
 
         var header = _selector.Selected!.DesignData.ModelId == 0
-            ? "Customization"
-            : $"Customization (Model Id #{_selector.Selected!.DesignData.ModelId})###Customization";
+                ? "外觀自訂"
+                : $"外觀自訂（模型 ID #{_selector.Selected!.DesignData.ModelId}）###Customization";
         var       expand = _config.AutoExpandDesignPanel.HasFlag(DesignPanelFlag.Customization);
         using var h      = ImUtf8.CollapsingHeaderId(header, expand ? ImGuiTreeNodeFlags.DefaultOpen : ImGuiTreeNodeFlags.None);
         if (!h)
@@ -214,7 +214,7 @@ public class DesignPanel
         var       available = set.SettingAvailable | CustomizeFlag.Clan | CustomizeFlag.Gender | CustomizeFlag.BodyType;
         var flags = _selector.Selected!.ApplyCustomizeExcludingBodyType == 0 ? 0 :
             (_selector.Selected!.ApplyCustomize & available) == available    ? 3 : 1;
-        if (ImGui.CheckboxFlags("Apply All Customizations", ref flags, 3))
+        if (ImGui.CheckboxFlags("套用所有外觀自訂", ref flags, 3))
         {
             var newFlags = flags == 3;
             _manager.ChangeApplyCustomize(_selector.Selected!, CustomizeIndex.Clan,   newFlags);
@@ -244,7 +244,7 @@ public class DesignPanel
     {
         using var id        = ImUtf8.PushId("Crests"u8);
         var       flags     = (uint)_selector.Selected!.Application.Crest;
-        var       bigChange = ImGui.CheckboxFlags("Apply All Crests", ref flags, (uint)CrestExtensions.AllRelevant);
+        var       bigChange = ImGui.CheckboxFlags("套用所有紋章", ref flags, (uint)CrestExtensions.AllRelevant);
         foreach (var flag in CrestExtensions.AllRelevantSet)
         {
             var apply = bigChange ? ((CrestFlag)flags & flag) == flag : _selector.Selected!.DoApplyCrest(flag);
@@ -325,8 +325,8 @@ public class DesignPanel
         bool? equip     = null;
         bool? customize = null;
         var   size      = new Vector2(200 * ImUtf8.GlobalScale, 0);
-        if (ImUtf8.ButtonEx("Disable Everything"u8,
-                "Disable application of everything, including any existing advanced dyes, advanced customizations, crests and wetness."u8, size,
+        if (ImUtf8.ButtonEx("全部停用"u8,
+                "停用所有項目的套用，包括現有的進階染色、進階外觀自訂、紋章與濕潤效果。"u8, size,
                 !enabled))
         {
             equip     = false;
@@ -337,8 +337,8 @@ public class DesignPanel
             ImUtf8.HoverTooltip(ImGuiHoveredFlags.AllowWhenDisabled, $"Hold {_config.DeleteDesignModifier} while clicking.");
 
         ImGui.SameLine();
-        if (ImUtf8.ButtonEx("Enable Everything"u8,
-                "Enable application of everything, including any existing advanced dyes, advanced customizations, crests and wetness."u8, size,
+        if (ImUtf8.ButtonEx("全部啟用"u8,
+                "啟用所有項目的套用，包括現有的進階染色、進階外觀自訂、紋章與濕潤效果。"u8, size,
                 !enabled))
         {
             equip     = true;
@@ -348,8 +348,8 @@ public class DesignPanel
         if (!enabled)
             ImUtf8.HoverTooltip(ImGuiHoveredFlags.AllowWhenDisabled, $"Hold {_config.DeleteDesignModifier} while clicking.");
 
-        if (ImUtf8.ButtonEx("Equipment Only"u8,
-                "Enable application of anything related to gear, disable anything that is not related to gear."u8, size,
+        if (ImUtf8.ButtonEx("僅裝備"u8,
+                "啟用所有裝備相關項目，並停用所有非裝備相關項目。"u8, size,
                 !enabled))
         {
             equip     = true;
@@ -360,8 +360,8 @@ public class DesignPanel
             ImUtf8.HoverTooltip(ImGuiHoveredFlags.AllowWhenDisabled, $"Hold {_config.DeleteDesignModifier} while clicking.");
 
         ImGui.SameLine();
-        if (ImUtf8.ButtonEx("Customization Only"u8,
-                "Enable application of anything related to customization, disable anything that is not related to customization."u8, size,
+        if (ImUtf8.ButtonEx("僅外觀自訂"u8,
+                "啟用所有外觀自訂相關項目，並停用所有非外觀自訂相關項目。"u8, size,
                 !enabled))
         {
             equip     = false;
@@ -371,8 +371,8 @@ public class DesignPanel
         if (!enabled)
             ImUtf8.HoverTooltip(ImGuiHoveredFlags.AllowWhenDisabled, $"Hold {_config.DeleteDesignModifier} while clicking.");
 
-        if (ImUtf8.ButtonEx("Default Application"u8,
-                "Set the application rules to the default values as if the design was newly created, without any advanced features or wetness."u8,
+        if (ImUtf8.ButtonEx("預設套用規則"u8,
+                "將套用規則重設為新建設計的預設值，不包含任何進階功能或濕潤效果。"u8,
                 size,
                 !enabled))
         {
@@ -384,7 +384,7 @@ public class DesignPanel
             ImUtf8.HoverTooltip(ImGuiHoveredFlags.AllowWhenDisabled, $"Hold {_config.DeleteDesignModifier} while clicking.");
 
         ImGui.SameLine();
-        if (ImUtf8.ButtonEx("Disable Advanced"u8, "Disable all advanced dyes and customizations but keep everything else as is."u8,
+        if (ImUtf8.ButtonEx("停用進階項目"u8, "停用所有進階染色與進階外觀自訂，其他項目維持不變。"u8,
                 size,
                 !enabled))
             _manager.ChangeApplyMulti(_selector.Selected!, null, null, null, false, null, null, false, null);

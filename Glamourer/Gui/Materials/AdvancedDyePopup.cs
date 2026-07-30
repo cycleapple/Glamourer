@@ -79,7 +79,7 @@ public sealed unsafe class AdvancedDyePopup(
             }
         }
 
-        ImUtf8.HoverTooltip("Open advanced dyes for this slot."u8);
+        ImUtf8.HoverTooltip("開啟此部位的進階染色。"u8);
     }
 
     private (string Path, string GamePath) ResourceName(MaterialValueIndex index)
@@ -135,9 +135,9 @@ public sealed unsafe class AdvancedDyePopup(
                 using var tt = ImUtf8.Tooltip();
 
                 if (gamePath.Length == 0 || path.Length == 0)
-                    ImUtf8.Text("This material does not exist."u8);
+                    ImUtf8.Text("此材質不存在。"u8);
                 else if (!available)
-                    ImUtf8.Text($"This material does not have an associated color set.\n\n{gamePath}\n{path}");
+                    ImUtf8.Text($"此材質沒有關聯的色表。\n\n{gamePath}\n{path}");
                 else
                     ImUtf8.Text($"{gamePath}\n{path}");
 
@@ -167,7 +167,7 @@ public sealed unsafe class AdvancedDyePopup(
 
         using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(_rowOffset == 0 ? ImGuiCol.TabActive : ImGuiCol.Tab)))
         {
-            if (ToggleButton.ButtonEx("Row Pairs 1-8 ", buttonWidth, ImGuiButtonFlags.MouseButtonLeft, ImDrawFlags.RoundCornersLeft))
+            if (ToggleButton.ButtonEx("成對列 1-8 ", buttonWidth, ImGuiButtonFlags.MouseButtonLeft, ImDrawFlags.RoundCornersLeft))
                 _rowOffset = 0;
         }
 
@@ -175,7 +175,7 @@ public sealed unsafe class AdvancedDyePopup(
 
         using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(_rowOffset == RowsPerPage ? ImGuiCol.TabActive : ImGuiCol.Tab)))
         {
-            if (ToggleButton.ButtonEx("Row Pairs 9-16", buttonWidth, ImGuiButtonFlags.MouseButtonLeft, ImDrawFlags.RoundCornersRight))
+            if (ToggleButton.ButtonEx("成對列 9-16", buttonWidth, ImGuiButtonFlags.MouseButtonLeft, ImDrawFlags.RoundCornersRight))
                 _rowOffset = RowsPerPage;
         }
     }
@@ -186,7 +186,7 @@ public sealed unsafe class AdvancedDyePopup(
         DrawTabBar(textures, materials, ref firstAvailable);
 
         if (firstAvailable)
-            ImUtf8.Text("No Editable Materials available."u8);
+            ImUtf8.Text("沒有可編輯的材質。"u8);
     }
 
     private void DrawWindow(ReadOnlySpan<Pointer<Texture>> textures, ReadOnlySpan<Pointer<Material>> materials)
@@ -311,8 +311,8 @@ public sealed unsafe class AdvancedDyePopup(
         }
         catch (Exception ex)
         {
-            Glamourer.Messager.AddMessage(new Notification(ex, "Could not paste color table from clipboard.",
-                "Could not paste color table from clipboard.", NotificationType.Error));
+            Glamourer.Messager.AddMessage(new Notification(ex, "無法從剪貼簿貼上色表。",
+                "無法從剪貼簿貼上色表。", NotificationType.Error));
         }
 
         table = default;
@@ -323,26 +323,26 @@ public sealed unsafe class AdvancedDyePopup(
     {
         using var id         = ImRaii.PushId(100);
         var       buttonSize = new Vector2(ImGui.GetFrameHeight());
-        ImUtf8.IconButton(FontAwesomeIcon.Crosshairs, "Highlight all affected colors on the character."u8, buttonSize);
+        ImUtf8.IconButton(FontAwesomeIcon.Crosshairs, "在角色上標示所有受影響的顏色。"u8, buttonSize);
         if (ImGui.IsItemHovered())
             preview.OnHover(materialIndex with { RowIndex = byte.MaxValue }, _actor.Index, table);
         ImGui.SameLine();
         ImGui.AlignTextToFramePadding();
         using (ImRaii.PushFont(UiBuilder.MonoFont))
         {
-            ImUtf8.Text("All Color Row Pairs (1-16)"u8);
+            ImUtf8.Text("所有成對色彩列（1-16）"u8);
         }
 
         var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
         ImGui.SameLine(ImGui.GetWindowSize().X - 3 * buttonSize.X - 2 * spacing - ImGui.GetStyle().WindowPadding.X);
-        if (ImUtf8.IconButton(FontAwesomeIcon.Clipboard, "Export this table to your clipboard."u8, buttonSize))
+        if (ImUtf8.IconButton(FontAwesomeIcon.Clipboard, "將此色表匯出至剪貼簿。"u8, buttonSize))
         {
             ColorRowClipboard.Table = table;
             CopyToClipboard(table);
         }
 
         ImGui.SameLine(0, spacing);
-        if (ImUtf8.IconButton(FontAwesomeIcon.Paste, "Import an exported table from your clipboard onto this table."u8, buttonSize)
+        if (ImUtf8.IconButton(FontAwesomeIcon.Paste, "從剪貼簿匯入先前匯出的色表並套用至此處。"u8, buttonSize)
          && ImportFromClipboard(out var newTable))
             for (var idx = 0; idx < ColorTable.NumRows; ++idx)
             {
@@ -357,7 +357,7 @@ public sealed unsafe class AdvancedDyePopup(
             }
 
         ImGui.SameLine(0, spacing);
-        if (ImUtf8.IconButton(FontAwesomeIcon.UndoAlt, "Reset this table to game state."u8, buttonSize, !_anyChanged))
+        if (ImUtf8.IconButton(FontAwesomeIcon.UndoAlt, "將此色表重設為遊戲狀態。"u8, buttonSize, !_anyChanged))
             for (byte i = 0; i < ColorTable.NumRows; ++i)
                 stateManager.ResetMaterialValue(_state, materialIndex with { RowIndex = i }, ApplySettings.Game);
     }
@@ -387,7 +387,7 @@ public sealed unsafe class AdvancedDyePopup(
         }
 
         var buttonSize = new Vector2(ImGui.GetFrameHeight());
-        ImUtf8.IconButton(FontAwesomeIcon.Crosshairs, "Highlight the affected colors on the character."u8, buttonSize);
+        ImUtf8.IconButton(FontAwesomeIcon.Crosshairs, "在角色上標示受影響的顏色。"u8, buttonSize);
         if (ImGui.IsItemHovered())
             preview.OnHover(index, _actor.Index, table);
 
@@ -397,20 +397,20 @@ public sealed unsafe class AdvancedDyePopup(
         {
             var rowIndex  = index.RowIndex / 2 + 1;
             var rowSuffix = (index.RowIndex & 1) == 0 ? 'A' : 'B';
-            ImUtf8.Text($"Row {rowIndex,2}{rowSuffix}");
+            ImUtf8.Text($"第 {rowIndex,2}{rowSuffix} 列");
         }
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemSpacing.X * 2);
-        var applied = ImUtf8.ColorPicker("##diffuse"u8, "Change the diffuse value for this row."u8, value.Model.Diffuse,
+        var applied = ImUtf8.ColorPicker("##diffuse"u8, "變更此列的漫反射值。"u8, value.Model.Diffuse,
             v => value.Model.Diffuse = v, "D"u8);
 
         var spacing = ImGui.GetStyle().ItemInnerSpacing;
         ImGui.SameLine(0, spacing.X);
-        applied |= ImUtf8.ColorPicker("##specular"u8, "Change the specular value for this row."u8, value.Model.Specular,
+        applied |= ImUtf8.ColorPicker("##specular"u8, "變更此列的鏡面反射值。"u8, value.Model.Specular,
             v => value.Model.Specular = v, "S"u8);
 
         ImGui.SameLine(0, spacing.X);
-        applied |= ImUtf8.ColorPicker("##emissive"u8, "Change the emissive value for this row."u8, value.Model.Emissive,
+        applied |= ImUtf8.ColorPicker("##emissive"u8, "變更此列的自發光值。"u8, value.Model.Emissive,
             v => value.Model.Emissive = v, "E"u8);
 
         ImGui.SameLine(0, spacing.X);
@@ -418,7 +418,7 @@ public sealed unsafe class AdvancedDyePopup(
         {
             ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
             applied |= DragGloss(ref value.Model.GlossStrength);
-            ImUtf8.HoverTooltip("Change the gloss strength for this row."u8);
+            ImUtf8.HoverTooltip("變更此列的光澤強度。"u8);
         }
         else
         {
@@ -430,7 +430,7 @@ public sealed unsafe class AdvancedDyePopup(
         {
             ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
             applied |= DragSpecularStrength(ref value.Model.SpecularStrength);
-            ImUtf8.HoverTooltip("Change the specular strength for this row."u8);
+            ImUtf8.HoverTooltip("變更此列的鏡面反射強度。"u8);
         }
         else
         {
@@ -438,10 +438,10 @@ public sealed unsafe class AdvancedDyePopup(
         }
 
         ImGui.SameLine(0, spacing.X);
-        if (ImUtf8.IconButton(FontAwesomeIcon.Clipboard, "Export this row to your clipboard."u8, buttonSize))
+        if (ImUtf8.IconButton(FontAwesomeIcon.Clipboard, "將此列匯出至剪貼簿。"u8, buttonSize))
             ColorRowClipboard.Row = value.Model;
         ImGui.SameLine(0, spacing.X);
-        if (ImUtf8.IconButton(FontAwesomeIcon.Paste, "Import an exported row from your clipboard onto this row."u8, buttonSize,
+        if (ImUtf8.IconButton(FontAwesomeIcon.Paste, "從剪貼簿匯入先前匯出的資料並套用至此列。"u8, buttonSize,
                 !ColorRowClipboard.IsSet))
         {
             value.Model = ColorRowClipboard.Row;
@@ -449,7 +449,7 @@ public sealed unsafe class AdvancedDyePopup(
         }
 
         ImGui.SameLine(0, spacing.X);
-        if (ImUtf8.IconButton(FontAwesomeIcon.UndoAlt, "Reset this row to game state."u8, buttonSize, !changed))
+        if (ImUtf8.IconButton(FontAwesomeIcon.UndoAlt, "將此列重設為遊戲狀態。"u8, buttonSize, !changed))
             stateManager.ResetMaterialValue(_state, index, ApplySettings.Game);
 
         if (applied)

@@ -132,7 +132,7 @@ public class MainWindow : Window, IDisposable
         {
             if (_penumbra.CurrentMajor == 0)
                 DrawProblemWindow(
-                    "Could not attach to Penumbra. Please make sure Penumbra is installed and running.\n\nPenumbra is required for Glamourer to work properly.");
+                    "無法連接 Penumbra。請確認已安裝並啟用 Penumbra。\n\nGlamourer 必須搭配 Penumbra 才能正常運作。");
             else if (_penumbra is
                      {
 
@@ -140,10 +140,10 @@ public class MainWindow : Window, IDisposable
                          CurrentMinor: >= PenumbraService.RequiredPenumbraFeatureVersion,
                      })
                 DrawProblemWindow(
-                    $"You are currently not attached to Penumbra, seemingly by manually detaching from it.\n\nPenumbra's last API Version was {_penumbra.CurrentMajor}.{_penumbra.CurrentMinor}.\n\nPenumbra is required for Glamourer to work properly.");
+                    $"目前未連接 Penumbra，可能是手動中斷了連線。\n\nPenumbra 上次的 API 版本為 {_penumbra.CurrentMajor}.{_penumbra.CurrentMinor}。\n\nGlamourer 必須搭配 Penumbra 才能正常運作。");
             else
                 DrawProblemWindow(
-                    $"Attaching to Penumbra failed.\n\nPenumbra's API Version was {_penumbra.CurrentMajor}.{_penumbra.CurrentMinor}, but Glamourer requires a version of {PenumbraService.RequiredPenumbraBreakingVersion}.{PenumbraService.RequiredPenumbraFeatureVersion}, where the major version has to match exactly, and the minor version has to be greater or equal.\nYou may need to update Penumbra or enable Testing Builds for it for this version of Glamourer.\n\nPenumbra is required for Glamourer to work properly.");
+                    $"連接 Penumbra 失敗。\n\nPenumbra 的 API 版本為 {_penumbra.CurrentMajor}.{_penumbra.CurrentMinor}，但 Glamourer 需要 {PenumbraService.RequiredPenumbraBreakingVersion}.{PenumbraService.RequiredPenumbraFeatureVersion}；主版本必須完全一致，次版本則必須相同或更高。\n你可能需要更新 Penumbra，或為此版本的 Glamourer 啟用測試版本。\n\nGlamourer 必須搭配 Penumbra 才能正常運作。");
         }
         else
         {
@@ -193,7 +193,7 @@ public class MainWindow : Window, IDisposable
 
     /// <summary> The longest support button text. </summary>
     public static ReadOnlySpan<byte> SupportInfoButtonText
-        => "Copy Support Info to Clipboard"u8;
+        => "複製支援資訊到剪貼簿"u8;
 
     /// <summary> Draw the support button group on the right-hand side of the window. </summary>
     public static void DrawSupportButtons(Glamourer glamourer, Changelog changelog)
@@ -210,7 +210,7 @@ public class MainWindow : Window, IDisposable
         CustomGui.DrawGuideButton(Glamourer.Messager, width);
 
         ImGui.SetCursorPos(new Vector2(xPos, 3 * ImGui.GetFrameHeightWithSpacing()));
-        if (ImGui.Button("Show Changelogs", new Vector2(width, 0)))
+        if (ImGui.Button("顯示更新紀錄", new Vector2(width, 0)))
             changelog.ForceOpen = true;
     }
 
@@ -224,7 +224,7 @@ public class MainWindow : Window, IDisposable
 
         var text = glamourer.GatherSupportInformation();
         ImGui.SetClipboardText(text);
-        Glamourer.Messager.NotificationMessage("Copied Support Info to Clipboard.", NotificationType.Success, false);
+        Glamourer.Messager.NotificationMessage("已複製支援資訊到剪貼簿。", NotificationType.Success, false);
     }
 
     private void OnTabSelected(TabType type, Design? _)
@@ -251,13 +251,13 @@ public class MainWindow : Window, IDisposable
         color.Pop();
 
         ImGui.NewLine();
-        if (ImUtf8.Button("Try Attaching Again"u8))
+        if (ImUtf8.Button("重新嘗試連接"u8))
             _penumbra.Reattach();
 
         var ignoreAllowed = _config.DeleteDesignModifier.IsActive();
         ImGui.SameLine();
-        if (ImUtf8.ButtonEx("Ignore Penumbra This Time"u8,
-                $"Some functionality, like automation or retaining state, will not work correctly without Penumbra.\n\nIgnore this at your own risk!{(ignoreAllowed ? string.Empty : $"\n\nHold {_config.DeleteDesignModifier} while clicking to enable this button.")}",
+        if (ImUtf8.ButtonEx("本次忽略 Penumbra"u8,
+                $"沒有 Penumbra 時，自動化或保留狀態等部分功能將無法正常運作。\n\n請自行承擔忽略此警告的風險！{(ignoreAllowed ? string.Empty : $"\n\n按住 {_config.DeleteDesignModifier} 並點擊以啟用此按鈕。")}",
                 default, !ignoreAllowed))
             _ignorePenumbra = true;
 

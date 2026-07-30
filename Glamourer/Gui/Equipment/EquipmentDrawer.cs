@@ -166,7 +166,7 @@ public class EquipmentDrawer
     public bool DrawAllStain(out StainIds ret, bool locked)
     {
         using var disabled = ImRaii.Disabled(locked);
-        var       change   = _stainCombo.Draw("Dye All Slots", Stain.None.RgbaColor, string.Empty, false, false, MouseWheelType.None);
+        var       change   = _stainCombo.Draw("染色所有部位", Stain.None.RgbaColor, string.Empty, false, false, MouseWheelType.None);
         ret = StainIds.None;
         if (change)
             if (_stainData.TryGetValue(_stainCombo.CurrentSelection.Key, out var stain))
@@ -434,7 +434,7 @@ public class EquipmentDrawer
             {
                 DragDropSource.SetPayload("stainDragDrop"u8);
                 _draggedStain = stain;
-                ImUtf8.Text($"Dragging {stain.Name}...");
+        ImUtf8.Text($"正在拖曳 {stain.Name}……");
             }
         }
 
@@ -538,9 +538,9 @@ public class EquipmentDrawer
 
         using var tt = ImUtf8.Tooltip();
         if (_dragTarget is EquipSlot.Unknown)
-            ImUtf8.Text($"Dragging {_draggedItem.Dragged.Name}...");
+        ImUtf8.Text($"正在拖曳 {_draggedItem.Dragged.Name}……");
         else
-            ImUtf8.Text($"Converting to {_draggedItem[_dragTarget].Name}...");
+        ImUtf8.Text($"正在轉換為 {_draggedItem[_dragTarget].Name}……");
     }
 
     private static bool ResetOrClear<T>(bool locked, bool clicked, bool allowRevert, bool allowClear,
@@ -557,14 +557,14 @@ public class EquipmentDrawer
         (var tt, item, var valid) = (allowRevert && !revertItem.Equals(currentItem), allowClear && !clearItem.Equals(currentItem),
                 ImGui.GetIO().KeyCtrl) switch
             {
-                (true, true, true) => ("Right-click to clear. Control and Right-Click to revert to game.\nControl and mouse wheel to scroll.",
+            (true, true, true) => ("右鍵清除。按住 Control 並按右鍵可還原至遊戲狀態。\n按住 Control 並滾動滑鼠滾輪可瀏覽。",
                     revertItem, true),
-                (true, true, false) => ("Right-click to clear. Control and Right-Click to revert to game.\nControl and mouse wheel to scroll.",
+            (true, true, false) => ("右鍵清除。按住 Control 並按右鍵可還原至遊戲狀態。\n按住 Control 並滾動滑鼠滾輪可瀏覽。",
                     clearItem, true),
-                (true, false, true)  => ("Control and Right-Click to revert to game.\nControl and mouse wheel to scroll.", revertItem, true),
-                (true, false, false) => ("Control and Right-Click to revert to game.\nControl and mouse wheel to scroll.", default, false),
-                (false, true, _)     => ("Right-click to clear.\nControl and mouse wheel to scroll.", clearItem, true),
-                (false, false, _)    => ("Control and mouse wheel to scroll.", default, false),
+            (true, false, true)  => ("按住 Control 並按右鍵可還原至遊戲狀態。\n按住 Control 並滾動滑鼠滾輪可瀏覽。", revertItem, true),
+            (true, false, false) => ("按住 Control 並按右鍵可還原至遊戲狀態。\n按住 Control 並滾動滑鼠滾輪可瀏覽。", default, false),
+            (false, true, _)     => ("右鍵清除。\n按住 Control 並滾動滑鼠滾輪可瀏覽。", clearItem, true),
+            (false, false, _)    => ("按住 Control 並滾動滑鼠滾輪可瀏覽。", default, false),
             };
         ImUtf8.HoverTooltip(tt);
 
@@ -615,7 +615,7 @@ public class EquipmentDrawer
 
         if (unknown)
             ImUtf8.HoverTooltip(ImGuiHoveredFlags.AllowWhenDisabled,
-                "The weapon type could not be identified, thus changing it to other weapons of that type is not possible."u8);
+                "無法識別武器類型，因此無法將其變更為同類型的其他武器。"u8);
     }
 
     private void DrawOffhand(in EquipDrawData mainhand, in EquipDrawData offhand, out string label, bool small, bool clear, bool open)
@@ -647,21 +647,21 @@ public class EquipmentDrawer
 
     private static void DrawApply(in EquipDrawData data)
     {
-        if (UiHelpers.DrawCheckbox($"##apply{data.Slot}", "Apply this item when applying the Design.", data.CurrentApply, out var enabled,
+        if (UiHelpers.DrawCheckbox($"##apply{data.Slot}", "套用設計時一併套用此物品。", data.CurrentApply, out var enabled,
                 data.Locked))
             data.SetApplyItem(enabled);
     }
 
     private static void DrawApply(in BonusDrawData data)
     {
-        if (UiHelpers.DrawCheckbox($"##apply{data.Slot}", "Apply this bonus item when applying the Design.", data.CurrentApply, out var enabled,
+        if (UiHelpers.DrawCheckbox($"##apply{data.Slot}", "套用設計時一併套用此額外裝備。", data.CurrentApply, out var enabled,
                 data.Locked))
             data.SetApplyItem(enabled);
     }
 
     private static void DrawApplyStain(in EquipDrawData data)
     {
-        if (UiHelpers.DrawCheckbox($"##applyStain{data.Slot}", "Apply this dye to the item when applying the Design.", data.CurrentApplyStain,
+        if (UiHelpers.DrawCheckbox($"##applyStain{data.Slot}", "套用設計時一併將此染色套用至物品。", data.CurrentApplyStain,
                 out var enabled,
                 data.Locked))
             data.SetApplyStain(enabled);
@@ -673,8 +673,8 @@ public class EquipmentDrawer
     {
         ImGui.SameLine();
         ImGuiComponents.HelpMarker(
-            "Changing weapons to weapons of different types can cause crashes, freezes, soft- and hard locks and cheating, "
-          + "thus it is only allowed to change weapons to other weapons of the same type.");
+                "將武器變更為不同類型可能造成崩潰、凍結、軟鎖或硬鎖，亦可能涉及作弊，"
+              + "因此只能變更為相同類型的其他武器。");
         DrawEquipLabel(hasAdvancedDyes, label);
 
         if (type == null)
@@ -695,6 +695,6 @@ public class EquipmentDrawer
         }
 
         if (hasAdvancedDyes)
-            ImUtf8.HoverTooltip("This design has advanced dyes setup for this slot."u8);
+        ImUtf8.HoverTooltip("此設計已為這個部位設定進階染色。"u8);
     }
 }

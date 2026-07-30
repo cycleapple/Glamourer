@@ -100,7 +100,7 @@ public class MultiDesignPanel(
     private int DrawDesignList()
     {
         ResetCounts();
-        using var tree = ImUtf8.TreeNode("Currently Selected Objects"u8, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.NoTreePushOnOpen);
+        using var tree = ImUtf8.TreeNode("目前選取的物件"u8, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.NoTreePushOnOpen);
         ImGui.Separator();
         if (!tree)
             return selector.SelectedPaths.Count(CountLeaves);
@@ -129,7 +129,7 @@ public class MultiDesignPanel(
                     ? (FontAwesomeIcon.FileCircleMinus, l.Value.Name.Text)
                     : (FontAwesomeIcon.FolderMinus, string.Empty);
                 ImGui.TableNextColumn();
-                if (ImUtf8.IconButton(icon, "Remove from selection."u8, sizeType))
+                if (ImUtf8.IconButton(icon, "從選取項目中移除。"u8, sizeType))
                     selector.RemovePathFromMultiSelection(path);
 
                 ImUtf8.DrawFrameColumn(text);
@@ -158,34 +158,34 @@ public class MultiDesignPanel(
 
     private float DrawMultiTagger(Vector2 width)
     {
-        ImUtf8.TextFrameAligned("Multi Tagger:"u8);
+        ImUtf8.TextFrameAligned("批次標籤："u8);
         ImGui.SameLine();
         var offset = ImGui.GetItemRectSize().X + ImGui.GetStyle().WindowPadding.X;
         ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - 2 * (width.X + ImGui.GetStyle().ItemSpacing.X));
-        ImUtf8.InputText("##tag"u8, ref _tag, "Tag Name..."u8);
+        ImUtf8.InputText("##tag"u8, ref _tag, "標籤名稱……"u8);
 
         UpdateTagCache();
         var label = _addDesigns.Count > 0
-            ? $"Add to {_addDesigns.Count} Designs"
-            : "Add";
+            ? $"新增至 {_addDesigns.Count} 個設計"
+            : "新增";
         var tooltip = _addDesigns.Count == 0
             ? _tag.Length == 0
-                ? "No tag specified."
-                : $"All designs selected already contain the tag \"{_tag}\"."
-            : $"Add the tag \"{_tag}\" to {_addDesigns.Count} designs as a local tag:\n\n\t{string.Join("\n\t", _addDesigns.Select(m => m.Name.Text))}";
+                ? "未指定標籤。"
+                : $"所有選取的設計都已包含標籤「{_tag}」。"
+            : $"將「{_tag}」作為本機標籤新增至 {_addDesigns.Count} 個設計：\n\n\t{string.Join("\n\t", _addDesigns.Select(m => m.Name.Text))}";
         ImGui.SameLine();
         if (ImUtf8.ButtonEx(label, tooltip, width, _addDesigns.Count == 0))
             foreach (var design in _addDesigns)
                 editor.AddTag(design, _tag);
 
         label = _removeDesigns.Count > 0
-            ? $"Remove from {_removeDesigns.Count} Designs"
-            : "Remove";
+            ? $"從 {_removeDesigns.Count} 個設計移除"
+            : "移除";
         tooltip = _removeDesigns.Count == 0
             ? _tag.Length == 0
-                ? "No tag specified."
-                : $"No selected design contains the tag \"{_tag}\" locally."
-            : $"Remove the local tag \"{_tag}\" from {_removeDesigns.Count} designs:\n\n\t{string.Join("\n\t", _removeDesigns.Select(m => m.Item1.Name.Text))}";
+                ? "未指定標籤。"
+                : $"選取的設計均未包含本機標籤「{_tag}」。"
+            : $"從 {_removeDesigns.Count} 個設計移除本機標籤「{_tag}」：\n\n\t{string.Join("\n\t", _removeDesigns.Select(m => m.Item1.Name.Text))}";
         ImGui.SameLine();
         if (ImUtf8.ButtonEx(label, tooltip, width, _removeDesigns.Count == 0))
             foreach (var (design, index) in _removeDesigns)
@@ -196,14 +196,14 @@ public class MultiDesignPanel(
 
     private void DrawMultiQuickDesignBar(float offset)
     {
-        ImUtf8.TextFrameAligned("Multi QDB:"u8);
+        ImUtf8.TextFrameAligned("批次快速設計列："u8);
         ImGui.SameLine(offset, ImGui.GetStyle().ItemSpacing.X);
         var buttonWidth = new Vector2((ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X) / 2, 0);
         var diff        = _numDesigns - _numQuickDesignEnabled;
         var tt = diff == 0
-            ? $"All {_numDesigns} selected designs are already displayed in the quick design bar."
-            : $"Display all {_numDesigns} selected designs in the quick design bar. Changes {diff} designs.";
-        if (ImUtf8.ButtonEx("Display Selected Designs in QDB"u8, tt, buttonWidth, diff == 0))
+            ? $"選取的 {_numDesigns} 個設計都已顯示於快速設計列。"
+            : $"在快速設計列顯示選取的 {_numDesigns} 個設計；將變更 {diff} 個設計。";
+        if (ImUtf8.ButtonEx("在快速設計列顯示選取的設計"u8, tt, buttonWidth, diff == 0))
         {
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.SetQuickDesign(design.Value, true);
@@ -211,9 +211,9 @@ public class MultiDesignPanel(
 
         ImGui.SameLine();
         tt = _numQuickDesignEnabled == 0
-            ? $"All {_numDesigns} selected designs are already hidden in the quick design bar."
-            : $"Hide all {_numDesigns} selected designs in the quick design bar. Changes {_numQuickDesignEnabled} designs.";
-        if (ImUtf8.ButtonEx("Hide Selected Designs in QDB"u8, tt, buttonWidth, _numQuickDesignEnabled == 0))
+            ? $"選取的 {_numDesigns} 個設計都已從快速設計列隱藏。"
+            : $"從快速設計列隱藏選取的 {_numDesigns} 個設計；將變更 {_numQuickDesignEnabled} 個設計。";
+        if (ImUtf8.ButtonEx("從快速設計列隱藏選取的設計"u8, tt, buttonWidth, _numQuickDesignEnabled == 0))
         {
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.SetQuickDesign(design.Value, false);
@@ -224,22 +224,22 @@ public class MultiDesignPanel(
 
     private void DrawMultiLock(float offset)
     {
-        ImUtf8.TextFrameAligned("Multi Lock:"u8);
+        ImUtf8.TextFrameAligned("批次鎖定："u8);
         ImGui.SameLine(offset, ImGui.GetStyle().ItemSpacing.X);
         var buttonWidth = new Vector2((ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X) / 2, 0);
         var diff        = _numDesigns - _numDesignsLocked;
         var tt = diff == 0
-            ? $"All {_numDesigns} selected designs are already write protected."
-            : $"Write-protect all {_numDesigns} designs. Changes {diff} designs.";
-        if (ImUtf8.ButtonEx("Turn Write-Protected"u8, tt, buttonWidth, diff == 0))
+            ? $"選取的 {_numDesigns} 個設計都已受到寫入保護。"
+            : $"將 {_numDesigns} 個設計設為寫入保護；將變更 {diff} 個設計。";
+        if (ImUtf8.ButtonEx("啟用寫入保護"u8, tt, buttonWidth, diff == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.SetWriteProtection(design.Value, true);
 
         ImGui.SameLine();
         tt = _numDesignsLocked == 0
-            ? $"None of the {_numDesigns} selected designs are write-protected."
-            : $"Remove the write protection of the {_numDesigns} selected designs. Changes {_numDesignsLocked} designs.";
-        if (ImUtf8.ButtonEx("Remove Write-Protection"u8, tt, buttonWidth, _numDesignsLocked == 0))
+            ? $"選取的 {_numDesigns} 個設計均未受到寫入保護。"
+            : $"移除選取的 {_numDesigns} 個設計的寫入保護；將變更 {_numDesignsLocked} 個設計。";
+        if (ImUtf8.ButtonEx("移除寫入保護"u8, tt, buttonWidth, _numDesignsLocked == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.SetWriteProtection(design.Value, false);
         ImGui.Separator();
@@ -247,22 +247,22 @@ public class MultiDesignPanel(
 
     private void DrawMultiResetSettings(float offset)
     {
-        ImUtf8.TextFrameAligned("Settings:"u8);
+        ImUtf8.TextFrameAligned("設定："u8);
         ImGui.SameLine(offset, ImGui.GetStyle().ItemSpacing.X);
         var buttonWidth = new Vector2((ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X) / 2, 0);
         var diff        = _numDesigns - _numDesignsResetSettings;
         var tt = diff == 0
-            ? $"All {_numDesigns} selected designs already reset temporary settings."
-            : $"Make all {_numDesigns} selected designs reset temporary settings. Changes {diff} designs.";
-        if (ImUtf8.ButtonEx("Set Reset Temp. Settings"u8, tt, buttonWidth, diff == 0))
+            ? $"選取的 {_numDesigns} 個設計都已重設暫時設定。"
+            : $"讓選取的 {_numDesigns} 個設計重設暫時設定；將變更 {diff} 個設計。";
+        if (ImUtf8.ButtonEx("啟用暫時設定重設"u8, tt, buttonWidth, diff == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.ChangeResetTemporarySettings(design.Value, true);
 
         ImGui.SameLine();
         tt = _numDesignsResetSettings == 0
-            ? $"None of the {_numDesigns} selected designs reset temporary settings."
-            : $"Stop all {_numDesigns} selected designs from resetting temporary settings. Changes {_numDesignsResetSettings} designs.";
-        if (ImUtf8.ButtonEx("Remove Reset Temp. Settings"u8, tt, buttonWidth, _numDesignsResetSettings == 0))
+            ? $"選取的 {_numDesigns} 個設計均未重設暫時設定。"
+            : $"讓選取的 {_numDesigns} 個設計停止重設暫時設定；將變更 {_numDesignsResetSettings} 個設計。";
+        if (ImUtf8.ButtonEx("停用暫時設定重設"u8, tt, buttonWidth, _numDesignsResetSettings == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.ChangeResetTemporarySettings(design.Value, false);
         ImGui.Separator();
@@ -270,22 +270,22 @@ public class MultiDesignPanel(
 
     private void DrawMultiResetDyes(float offset)
     {
-        ImUtf8.TextFrameAligned("Adv. Dyes:"u8);
+        ImUtf8.TextFrameAligned("進階染色："u8);
         ImGui.SameLine(offset, ImGui.GetStyle().ItemSpacing.X);
         var buttonWidth = new Vector2((ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X) / 2, 0);
         var diff        = _numDesigns - _numDesignsResetDyes;
         var tt = diff == 0
-            ? $"All {_numDesigns} selected designs already reset advanced dyes."
-            : $"Make all {_numDesigns} selected designs reset advanced dyes. Changes {diff} designs.";
-        if (ImUtf8.ButtonEx("Set Reset Dyes"u8, tt, buttonWidth, diff == 0))
+            ? $"選取的 {_numDesigns} 個設計都已重設進階染色。"
+            : $"讓選取的 {_numDesigns} 個設計重設進階染色；將變更 {diff} 個設計。";
+        if (ImUtf8.ButtonEx("啟用進階染色重設"u8, tt, buttonWidth, diff == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.ChangeResetAdvancedDyes(design.Value, true);
 
         ImGui.SameLine();
         tt = _numDesignsLocked == 0
-            ? $"None of the {_numDesigns} selected designs reset advanced dyes."
-            : $"Stop all {_numDesigns} selected designs from resetting advanced dyes. Changes {_numDesignsResetDyes} designs.";
-        if (ImUtf8.ButtonEx("Remove Reset Dyes"u8, tt, buttonWidth, _numDesignsResetDyes == 0))
+            ? $"選取的 {_numDesigns} 個設計均未重設進階染色。"
+            : $"讓選取的 {_numDesigns} 個設計停止重設進階染色；將變更 {_numDesignsResetDyes} 個設計。";
+        if (ImUtf8.ButtonEx("停用進階染色重設"u8, tt, buttonWidth, _numDesignsResetDyes == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.ChangeResetAdvancedDyes(design.Value, false);
         ImGui.Separator();
@@ -293,22 +293,22 @@ public class MultiDesignPanel(
 
     private void DrawMultiForceRedraw(float offset)
     {
-        ImUtf8.TextFrameAligned("Redrawing:"u8);
+        ImUtf8.TextFrameAligned("重新繪製："u8);
         ImGui.SameLine(offset, ImGui.GetStyle().ItemSpacing.X);
         var buttonWidth = new Vector2((ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X) / 2, 0);
         var diff        = _numDesigns - _numDesignsForcedRedraw;
         var tt = diff == 0
-            ? $"All {_numDesigns} selected designs already force redraws."
-            : $"Make all {_numDesigns} designs force redraws. Changes {diff} designs.";
-        if (ImUtf8.ButtonEx("Force Redraws"u8, tt, buttonWidth, diff == 0))
+            ? $"選取的 {_numDesigns} 個設計都已強制重新繪製。"
+            : $"讓 {_numDesigns} 個設計強制重新繪製；將變更 {diff} 個設計。";
+        if (ImUtf8.ButtonEx("強制重新繪製"u8, tt, buttonWidth, diff == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.ChangeForcedRedraw(design.Value, true);
 
         ImGui.SameLine();
         tt = _numDesignsLocked == 0
-            ? $"None of the {_numDesigns} selected designs force redraws."
-            : $"Stop all {_numDesigns} selected designs from forcing redraws. Changes {_numDesignsForcedRedraw} designs.";
-        if (ImUtf8.ButtonEx("Remove Forced Redraws"u8, tt, buttonWidth, _numDesignsForcedRedraw == 0))
+            ? $"選取的 {_numDesigns} 個設計均未強制重新繪製。"
+            : $"讓選取的 {_numDesigns} 個設計停止強制重新繪製；將變更 {_numDesignsForcedRedraw} 個設計。";
+        if (ImUtf8.ButtonEx("移除強制重新繪製"u8, tt, buttonWidth, _numDesignsForcedRedraw == 0))
             foreach (var design in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
                 editor.ChangeForcedRedraw(design.Value, false);
         ImGui.Separator();
