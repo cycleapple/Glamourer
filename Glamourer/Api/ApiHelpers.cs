@@ -46,7 +46,10 @@ public class ApiHelpers(ActorObjectManager objects, StateManager stateManager, A
         var actor      = objects.Objects[objectIndex];
         var identifier = actor.GetIdentifier(actors);
         if (identifier.IsValid && stateManager.GetOrCreate(identifier, actor, out var state))
+        {
+            objects.EnsureIdentifier(identifier, actor);
             return state;
+        }
 
         return null;
     }
