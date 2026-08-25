@@ -1,7 +1,7 @@
 [submodule "OtterGui"]
 	path = OtterGui
-	url = https://github.com/Ottermandias/OtterGui.git
-	branch = main
+	url = https://github.com/cycleapple/OtterGui.git
+	branch = api13-tw-resizable-child-fix
 [submodule "Penumbra.GameData"]
 	path = Penumbra.GameData
 	url = https://github.com/cycleapple/Penumbra.GameData.git
