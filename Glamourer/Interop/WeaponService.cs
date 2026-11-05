@@ -1,4 +1,4 @@
-﻿using Dalamud.Hooking;
+using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using Glamourer.Events;
@@ -13,7 +13,7 @@ public unsafe class WeaponService : IDisposable
     private readonly WeaponLoading     _event;
     private readonly ThreadLocal<bool> _inUpdate = new(() => false);
 
-    private readonly delegate* unmanaged[Stdcall]<DrawDataContainer*, uint, ulong, byte, byte, byte, byte, void>
+    private readonly delegate* unmanaged[Stdcall]<DrawDataContainer*, uint, ulong, byte, byte, byte, byte, byte, void>
         _original;
 
     public WeaponService(WeaponLoading @event, IGameInteropProvider interop)
@@ -22,7 +22,7 @@ public unsafe class WeaponService : IDisposable
         _loadWeaponHook =
             interop.HookFromAddress<LoadWeaponDelegate>((nint)DrawDataContainer.MemberFunctionPointers.LoadWeapon, LoadWeaponDetour);
         _original =
-            (delegate* unmanaged[Stdcall] < DrawDataContainer*, uint, ulong, byte, byte, byte, byte, void >)
+            (delegate* unmanaged[Stdcall] < DrawDataContainer*, uint, ulong, byte, byte, byte, byte, byte, void >)
             DrawDataContainer.MemberFunctionPointers.LoadWeapon;
         _loadWeaponHook.Enable();
     }
@@ -37,12 +37,12 @@ public unsafe class WeaponService : IDisposable
     // skipGameObject seems to control whether the new weapons are written to the game object or just influence the draw object. (1 = skip, 0 = change)
     // unk4 seemed to be the same as unk1.
     private delegate void LoadWeaponDelegate(DrawDataContainer* drawData, uint slot, ulong weapon, byte redrawOnEquality, byte unk2,
-        byte skipGameObject, byte unk4);
+        byte skipGameObject, byte unk4, byte unk5);
 
     private readonly Hook<LoadWeaponDelegate> _loadWeaponHook;
 
     private void LoadWeaponDetour(DrawDataContainer* drawData, uint slot, ulong weaponValue, byte redrawOnEquality, byte unk2,
-        byte skipGameObject, byte unk4)
+        byte skipGameObject, byte unk4, byte unk5)
     {
         if (!_inUpdate.Value)
         {
@@ -64,13 +64,13 @@ public unsafe class WeaponService : IDisposable
             else if (weaponValue == actor.GetMainhand().Value && weaponValue != 0)
                 _event.Invoke(actor, EquipSlot.MainHand, ref tmpWeapon);
 
-            _loadWeaponHook.Original(drawData, slot, weapon.Value, redrawOnEquality, unk2, skipGameObject, unk4);
+            _loadWeaponHook.Original(drawData, slot, weapon.Value, redrawOnEquality, unk2, skipGameObject, unk4, unk5);
 
             if (tmpWeapon.Value != weapon.Value)
             {
                 if (tmpWeapon.Skeleton.Id == 0)
                     tmpWeapon.Stains = StainIds.None;
-                _loadWeaponHook.Original(drawData, slot, tmpWeapon.Value, 1, unk2, 1, unk4);
+                _loadWeaponHook.Original(drawData, slot, tmpWeapon.Value, 1, unk2, 1, unk4, unk5);
             }
 
             Glamourer.Log.Excessive(
@@ -78,7 +78,7 @@ public unsafe class WeaponService : IDisposable
         }
         else
         {
-            _loadWeaponHook.Original(drawData, slot, weaponValue, redrawOnEquality, unk2, skipGameObject, unk4);
+            _loadWeaponHook.Original(drawData, slot, weaponValue, redrawOnEquality, unk2, skipGameObject, unk4, unk5);
         }
     }
 
@@ -89,18 +89,18 @@ public unsafe class WeaponService : IDisposable
         {
             case EquipSlot.MainHand:
                 _inUpdate.Value = true;
-                _original(&character.AsCharacter->DrawData, 0, weapon.Value, 1, 0, 1, 0);
+                _original(&character.AsCharacter->DrawData, 0, weapon.Value, 1, 0, 1, 0, 0);
                 _inUpdate.Value = false;
                 return;
             case EquipSlot.OffHand:
                 _inUpdate.Value = true;
-                _original(&character.AsCharacter->DrawData, 1, weapon.Value, 1, 0, 1, 0);
+                _original(&character.AsCharacter->DrawData, 1, weapon.Value, 1, 0, 1, 0, 0);
                 _inUpdate.Value = false;
                 return;
             case EquipSlot.BothHand:
                 _inUpdate.Value = true;
-                _original(&character.AsCharacter->DrawData, 0, weapon.Value,                1, 0, 1, 0);
-                _original(&character.AsCharacter->DrawData, 1, CharacterWeapon.Empty.Value, 1, 0, 1, 0);
+                _original(&character.AsCharacter->DrawData, 0, weapon.Value,                1, 0, 1, 0, 0);
+                _original(&character.AsCharacter->DrawData, 1, CharacterWeapon.Empty.Value, 1, 0, 1, 0, 0);
                 _inUpdate.Value = false;
                 return;
         }
