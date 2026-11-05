@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Glamourer.Designs;
 using Glamourer.Interop.Material;
@@ -490,7 +490,7 @@ public class MultiDesignPanel(
 
         foreach (var leaf in selector.SelectedPaths.OfType<DesignFileSystem.Leaf>())
         {
-            var index = leaf.Value.Tags.IndexOf(_tag);
+            var index = Array.IndexOf(leaf.Value.Tags, _tag);
             if (index >= 0)
                 _removeDesigns.Add((leaf.Value, index));
             else

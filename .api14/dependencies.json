@@ -1,0 +1,38 @@
+[
+  {
+    "path": "Glamourer.Api",
+    "baseCommit": "54c1944dc7db704733b4788520e494761bb0b58e",
+    "patch": "patches/1e3fa2cf51f60cdb.patch",
+    "sha256": "d2fb54d4beb9d9ed314a8f43a4f99732937694000836735ea0b37673133fdde5"
+  },
+  {
+    "path": "OtterGui",
+    "baseCommit": "cf29d2dc04b93e067230192d783f3e97fb2fafd0",
+    "patch": "patches/fa3971c4e08c8077.patch",
+    "sha256": "3cca454cae7e6b11447342ab2e4c7aaef4e252d6336c2215a9e2bcd11a12dcae"
+  },
+  {
+    "path": "Penumbra.Api",
+    "baseCommit": "c27a06004138f2ec80ccdb494bb6ddf6d39d2165",
+    "patch": "patches/4b4086828078f567.patch",
+    "sha256": "84453bca64b86b051ea548661579cb77003aee1216e762d457c8ba899131357a"
+  },
+  {
+    "path": "Penumbra.GameData",
+    "baseCommit": "d610cb746f66d7a239ad03c6f84d65f80bd53f3c",
+    "patch": "patches/f6338eaa6408f2f0.patch",
+    "sha256": "aa5f13b584fa875f06c33b3bbc7c675554ed2ba2cb8677f4f1c92b0f0f147516"
+  },
+  {
+    "path": "Penumbra.String",
+    "baseCommit": "878acce46e286867d6ef1f8ecedb390f7bac34fd",
+    "patch": "patches/d6a0ce20a148a090.patch",
+    "sha256": "64dc9985c3014121c82f1d1c699db1fc9665bf7367235f8513f3893bb6325fb5"
+  },
+  {
+    "path": "OtterGui/OtterGuiInternal",
+    "baseCommit": "49631aab5c267953f9d442546488ea3bfdf52fa7",
+    "patch": "patches/83d6c41b4082a781.patch",
+    "sha256": "9997cf5bc08788acb336cb58a8405138ba9a14a407dd295f4ccbd1bd4cafd5a1"
+  }
+]

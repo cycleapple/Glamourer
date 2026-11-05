@@ -1,4 +1,4 @@
-﻿using Dalamud.Utility;
+using Dalamud.Utility;
 using Glamourer.Designs.History;
 using Glamourer.Designs.Links;
 using Glamourer.Events;
@@ -228,7 +228,7 @@ public sealed class DesignManager : DesignEditor
 
         design.Tags     = design.Tags.Append(tag).OrderBy(t => t).ToArray();
         design.LastEdit = DateTimeOffset.UtcNow;
-        var idx = design.Tags.IndexOf(tag);
+        var idx = Array.IndexOf(design.Tags, tag);
         SaveService.QueueSave(design);
         Glamourer.Log.Debug($"Added tag {tag} at {idx} to design {design.Identifier}.");
         DesignChanged.Invoke(DesignChanged.Type.AddedTag, design, new TagAddedTransaction(tag, idx));
@@ -261,7 +261,7 @@ public sealed class DesignManager : DesignEditor
         SaveService.QueueSave(design);
         Glamourer.Log.Debug($"Renamed tag {oldTag} at {tagIdx} to {newTag} in design {design.Identifier} and reordered tags.");
         DesignChanged.Invoke(DesignChanged.Type.ChangedTag, design,
-            new TagChangedTransaction(oldTag, newTag, tagIdx, design.Tags.IndexOf(newTag)));
+            new TagChangedTransaction(oldTag, newTag, tagIdx, Array.IndexOf(design.Tags, newTag)));
     }
 
     /// <summary> Add an associated mod to a design. </summary>
