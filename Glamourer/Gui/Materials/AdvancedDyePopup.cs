@@ -346,14 +346,9 @@ public sealed unsafe class AdvancedDyePopup(
          && ImportFromClipboard(out var newTable))
             for (var idx = 0; idx < ColorTable.NumRows; ++idx)
             {
-                var row         = newTable[idx];
-                var internalRow = new ColorRow(row);
-                var slot        = materialIndex.ToEquipSlot();
-                var weapon = slot is EquipSlot.MainHand or EquipSlot.OffHand
-                    ? _state.ModelData.Weapon(slot)
-                    : _state.ModelData.Armor(slot).ToWeapon(0);
-                var value = new MaterialValueState(internalRow, internalRow, weapon, StateSource.Manual);
-                stateManager.ChangeMaterialValue(_state, materialIndex with { RowIndex = (byte)idx }, value, ApplySettings.Manual);
+                var index = materialIndex with { RowIndex = (byte)idx };
+                var value = CreateManualValue(index, new ColorRow(newTable[idx]));
+                stateManager.ChangeMaterialValue(_state, index, value, ApplySettings.Manual);
             }
 
         ImGui.SameLine(0, spacing);
@@ -362,28 +357,41 @@ public sealed unsafe class AdvancedDyePopup(
                 stateManager.ResetMaterialValue(_state, materialIndex with { RowIndex = i }, ApplySettings.Game);
     }
 
+    // The displayed or pasted table already contains edits. Compare future redraws against
+    // the original dyed material, otherwise entering GPose can discard the manual colors.
+    private MaterialValueState CreateManualValue(MaterialValueIndex index, ColorRow modelRow)
+    {
+        if (_state.Materials.TryGetValue(index, out var existing))
+            return new MaterialValueState(existing.Game, modelRow, existing.DrawData,
+                existing.Source is StateSource.Pending or StateSource.IpcPending ? StateSource.Pending : StateSource.Manual);
+
+        var slot = index.ToEquipSlot();
+        var weapon = slot switch
+        {
+            EquipSlot.MainHand or EquipSlot.OffHand => _state.ModelData.Weapon(slot),
+            EquipSlot.Unknown => _state.ModelData.BonusItem((index.SlotIndex - 16u).ToBonusSlot()).Armor().ToWeapon(0),
+            _ => _state.ModelData.Armor(slot).ToWeapon(0),
+        };
+        if (PrepareColorSet.TryGetColorTable(_actor, index, out var gameTable, out _))
+            return new MaterialValueState(new ColorRow(gameTable[index.RowIndex]), modelRow, weapon, StateSource.Manual);
+
+        // Capture the baseline at the next material load if the resource is still loading.
+        return new MaterialValueState(ColorRow.Empty, modelRow, weapon, StateSource.Pending);
+    }
+
     private void DrawRow(ref ColorTableRow row, MaterialValueIndex index, in ColorTable.Table table)
     {
         using var id      = ImUtf8.PushId(index.RowIndex);
         var       changed = _state.Materials.TryGetValue(index, out var value);
         if (!changed)
         {
-            var internalRow = new ColorRow(row);
-            var slot        = index.ToEquipSlot();
-            var weapon = slot switch
-            {
-                EquipSlot.MainHand => _state.ModelData.Weapon(EquipSlot.MainHand),
-                EquipSlot.OffHand  => _state.ModelData.Weapon(EquipSlot.OffHand),
-                EquipSlot.Unknown =>
-                    _state.ModelData.BonusItem((index.SlotIndex - 16u).ToBonusSlot()).Armor().ToWeapon(0), // TODO: Handle better
-                _ => _state.ModelData.Armor(slot).ToWeapon(0),
-            };
-            value = new MaterialValueState(internalRow, internalRow, weapon, StateSource.Manual);
+            value = CreateManualValue(index, new ColorRow(row));
         }
         else
         {
             _anyChanged = true;
-            value       = new MaterialValueState(value.Game, value.Model, value.DrawData, StateSource.Manual);
+            value       = new MaterialValueState(value.Game, value.Model, value.DrawData,
+                value.Source is StateSource.Pending or StateSource.IpcPending ? StateSource.Pending : StateSource.Manual);
         }
 
         var buttonSize = new Vector2(ImGui.GetFrameHeight());
