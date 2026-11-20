@@ -130,6 +130,13 @@ public class StateListener : IDisposable
         ref var customize = ref *(CustomizeArray*)customizePtr;
         if (_autoDesignApplier.Reduce(actor, _creatingIdentifier, out _creatingState))
         {
+            if (_creatingState.Materials.Values.Count > 0 || _creatingState.ModelData.Stain(EquipSlot.LFinger) != StainIds.None)
+                Glamourer.Log.Verbose(
+                    $"[ActorRedrawDyes] ObjectIndex={actor.Index}, IsGPoseOrCutscene={actor.IsGPoseOrCutscene}, " +
+                    $"IncomingLeftRing={((CharacterArmor*)equipDataPtr)[9]}, " +
+                    $"BaseLeftRing={_creatingState.BaseData.Armor(EquipSlot.LFinger)}, " +
+                    $"ModelLeftRing={_creatingState.ModelData.Armor(EquipSlot.LFinger)}, " +
+                    $"MaterialRows={_creatingState.Materials.Values.Count}.");
             _isPlayerNpc = _creatingIdentifier.Type is IdentifierType.Player
              && actor.IsCharacter
              && actor.AsCharacter->GetObjectKind() is ObjectKind.EventNpc;

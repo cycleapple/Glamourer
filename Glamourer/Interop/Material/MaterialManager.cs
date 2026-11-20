@@ -101,6 +101,13 @@ public sealed unsafe class MaterialManager : IRequiredService, IDisposable
                         break;
                     case StateSource.IpcManual:
                     case StateSource.Manual:
+                        Glamourer.Log.Verbose(
+                            $"[AdvancedDyeReset] Index={idx}, Source={materialValue.Source}, " +
+                            $"OldEquipment={materialValue.DrawData}, NewEquipment={drawData}, " +
+                            $"SameEquipment={materialValue.DrawData.Skeleton == drawData.Skeleton && materialValue.DrawData.Weapon == drawData.Weapon && materialValue.DrawData.Variant == drawData.Variant}, " +
+                            $"SameStains={materialValue.DrawData.Stains == drawData.Stains}, SameBaseColor={materialValue.Game.NearEqual(newGame)}, " +
+                            $"OldDiffuse={materialValue.Game.Diffuse}, NewDiffuse={newGame.Diffuse}, " +
+                            $"OldEmissive={materialValue.Game.Emissive}, NewEmissive={newGame.Emissive}.");
                         deleteList.Add(idx);
                         break;
                     case StateSource.Fixed:
@@ -193,12 +200,9 @@ public sealed unsafe class MaterialManager : IRequiredService, IDisposable
 
     /// <summary> We need to get the temporary set, variant and stain that is currently being set if it is available. </summary>
     private static CharacterWeapon GetTempSlot(Human* human, byte slotId)
-    {
-        if (human->ChangedEquipData == null)
-            return ((Model)human).GetArmor(((uint)slotId).ToEquipSlot()).ToWeapon(0);
-
-        return ((CharacterArmor*)human->ChangedEquipData + slotId * 3)->ToWeapon(0);
-    }
+        // Material slots 16/17 (glasses) map to equipment entries 10/11.
+        // Use the same typed layout and mapping as the model inspector.
+        => ((Model)human).GetArmorChanged((HumanSlot)slotId).ToWeapon(0);
 
     /// <summary>
     /// We need to get the temporary set, variant and stain that is currently being set if it is available.

@@ -40,3 +40,23 @@ var freshIndex=MaterialValueIndex.FromSlot(EquipSlot.LFinger) with {RowIndex=2};
 var fresh=(MaterialValueState)create.Invoke(popup,new object[]{freshIndex,yellow})!;
 Check(fresh.Source == StateSource.Pending && fresh.Model.NearEqual(yellow), "first paste with unavailable resource keeps the color pending baseline capture");
 Check(!new MaterialValueState(yellow,yellow,gear,StateSource.Manual).EqualGame(blue,gear), "old paste baseline reproduces the reset condition");
+
+var getTempSlot = typeof(MaterialManager).GetMethod("GetTempSlot", BindingFlags.NonPublic | BindingFlags.Static, null,
+    new[]{typeof(FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Human).MakePointerType(),typeof(byte)},null)!.CreateDelegate<ReadHumanSlot>();
+unsafe {
+ var human = new FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Human();
+ var changed = stackalloc ChangedEquipData[18];
+ for (int i=0;i<18;i++) changed[i] = default;
+ human.ChangedEquipData = (byte*)changed;
+ changed[9].Model=(PrimaryId)341; changed[9].Variant=(Variant)2; changed[9].Stains=new StainIds((StainId)118,(StainId)4);
+ changed[10].BonusModel=(PrimaryId)5501; changed[10].BonusVariant=(Variant)3;
+ var ring=getTempSlot(&human,9);
+ Check(ring.Skeleton.Id==341 && ring.Stains==changed[9].Stains, "temporary left ring preserves both dyes");
+ var glasses=getTempSlot(&human,16);
+ Check(glasses.Skeleton.Id==5501 && glasses.Variant.Id==3, "glasses material slot 16 maps to equipment entry 10");
+ Check(getTempSlot(&human,12).Skeleton.Id==0, "unsupported human slot does not read arbitrary equipment");
+ human.ChangedEquipData=null;
+ ((CharacterArmor*)&human.Head)[9]=new CharacterArmor((PrimaryId)341,(Variant)2,new StainIds((StainId)118,(StainId)4));
+ Check(getTempSlot(&human,9).Stains==ring.Stains, "left ring dyes survive fallback to loaded model data");
+}
+unsafe delegate CharacterWeapon ReadHumanSlot(FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Human* human,byte slot);

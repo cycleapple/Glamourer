@@ -186,7 +186,7 @@ public class StateEditor(
 
         var actors = Applier.ChangeStain(state, slot, settings.Source.RequiresChange());
         Glamourer.Log.Verbose(
-            $"Set {slot.ToName()} stain in state {state.Identifier.Incognito(null)} from {old} to {stains}. [Affecting {actors.ToLazyString("nothing")}.]");
+            $"Set {slot.ToName()} stain in state {state.Identifier.Incognito(null)} from {old} to {stains}. [Source={settings.Source}; Affecting {actors.ToLazyString("nothing")}.]");
         StateChanged.Invoke(StateChangeType.Stains, settings.Source, state, actors, new StainTransaction(slot, old, stains));
     }
 
@@ -242,7 +242,7 @@ public class StateEditor(
 
         var actors = Applier.ChangeMaterialValue(state, index, true);
         Glamourer.Log.Verbose(
-            $"Reset material value in state {state.Identifier.Incognito(null)} to game value. [Affecting {actors.ToLazyString("nothing")}.]");
+            $"Reset material value {index} in state {state.Identifier.Incognito(null)} to game value. [Source={settings.Source}; Affecting {actors.ToLazyString("nothing")}.]");
         StateChanged.Invoke(StateChangeType.MaterialValue, settings.Source, state, actors, new MaterialTransaction(index, null, null));
     }
 
